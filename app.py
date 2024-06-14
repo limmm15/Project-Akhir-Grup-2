@@ -19,9 +19,9 @@ app=Flask(__name__)
 def home():
     return render_template('index.html')
 
-@app.route('/nan',methods=['GET','POST'])
+@app.route('/pres',methods=['GET','POST'])
 def nan():
-    return render_template('nan.html')
+    return render_template('pengumuman.html')
 
 @app.route('/about',methods=['GET','POST'])
 def about():
