@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Form Pendaftaran</h1>
+<p>Admin dapat melihat dan mendownload form yang telah dikirimkan pengguna</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Nama</th>
+            <th>Email</th>
+            <th>Telepon</th>
+            <th>Aksi</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for form in forms %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ form.nama }}</td>
+            <td>{{ form.email }}</td>
+            <td>{{ form.telepon }}</td>
+            <td><a href="#" class="btn btn-primary">Download</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

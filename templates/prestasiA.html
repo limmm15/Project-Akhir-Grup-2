@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Prastasi Content</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Foto</th>
+            <th>Judul</th>
+            <th>Keterangan</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for content in contents %}
+        <tr>
+            <td><img src="{{ url_for('uploaded_file', filename=content.foto) }}" alt="{{ content.judul }}" width="100"></td>
+            <td>{{ content.judul }}</td>
+            <td>{{ content.keterangan }}</td>
+            <td>
+                <a href="{{ url_for('edit_prestasi', id=content._id) }}" class="btn btn-warning">Edit</a>
+                <form action="{{ url_for('delete_prestasi', id=content._id) }}" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{{ url_for('add_prestasi') }}" class="btn btn-primary">Add New</a>
+{% endblock %}
