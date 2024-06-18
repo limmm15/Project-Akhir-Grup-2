@@ -1046,9 +1046,18 @@ h5,
   flex: 0 0 90px;
 }
 
-.social-wrap a {
+.a1 {
   display: inline-block;
-  width: 60px;
+  width: 64px;
+  height: 40px;
+  background: #51be78;
+  position: relative;
+  border-radius: 10%;
+}
+
+.a2 {
+  display: inline-block;
+  width: 40px;
   height: 40px;
   background: #51be78;
   position: relative;
@@ -1527,6 +1536,11 @@ h5,
   -webkit-animation: loader-dash 1.5s ease-in-out infinite;
   animation: loader-dash 1.5s ease-in-out infinite;
   stroke-linecap: round;
+}
+
+.title {
+  font-weight: bold;
+  color: #51be78;
 }
 
 @-webkit-keyframes loader-rotate {
