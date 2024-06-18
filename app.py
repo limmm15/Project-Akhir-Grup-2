@@ -19,42 +19,37 @@ app=Flask(__name__)
 def home():
     return render_template('index.html')
 
-@app.route('/pres',methods=['GET','POST'])
-def nan():
+@app.route('/profile',methods=['GET','POST'])
+def Profile():
+    return render_template('profile.html')
+
+@app.route('/SarPras',methods=['GET','POST'])
+def SarPras():
+    return render_template('sarpras.html')
+
+@app.route('/galeri',methods=['GET','POST'])
+def galeri():
+    return render_template('galeri.html')
+
+@app.route('/prestasi',methods=['GET','POST'])
+def prestasi():
+    return render_template('prestasi.html')
+
+@app.route('/pengumuman',methods=['GET','POST'])
+def pengumuman():
     return render_template('pengumuman.html')
 
-@app.route('/about',methods=['GET','POST'])
-def about():
-    return render_template('about.html')
+@app.route('/daftar',methods=['GET','POST'])
+def daftar():
+    return render_template('daftar.html')
 
-@app.route('/admission',methods=['GET','POST'])
-def admissions():
-    return render_template('admissions.html')
+@app.route('/loginA',methods=['GET','POST'])
+def loginA():
+    return render_template('loginA.html')
 
-@app.route('/contact',methods=['GET','POST'])
-def contact():
-    return render_template('contact.html')
-
-@app.route('/course',methods=['GET','POST'])
-def course():
-    return render_template('course.html')
-
-@app.route('/courses',methods=['GET','POST'])
-def courses():
-    return render_template('courses.html')
-
-@app.route('/login',methods=['GET','POST'])
-def login():
-    return render_template('login.html')
-
-@app.route('/register',methods=['GET','POST'])
-def register():
-    return render_template('register.html')
-
-@app.route('/news',methods=['GET','POST'])
-def news():
-    return render_template('news.html')
-
+@app.route('/loginP',methods=['GET','POST'])
+def loginP():
+    return render_template('loginP.html')
 
 if __name__ == '__main__':
     app.run('0.0.0.0',port=5000,debug=True)
