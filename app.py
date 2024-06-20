@@ -96,7 +96,7 @@ def daftar():
 #        ijazah_tk.save(filename)
 #        filenames['ijazah_tk'] = filename
 #
-#    db.form.insert_one({
+#    db.daftar.insert_one({
 #        "nama": nama,
 #        "nama_orang_tua": nama_orang_tua,
 #        "alamat": alamat,
