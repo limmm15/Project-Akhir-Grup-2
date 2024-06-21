@@ -46,7 +46,8 @@ def home():
 
 @app.route('/profile',methods=['GET','POST'])
 def Profile():
-    return render_template('profile.html')
+    guru_contents = db.guru.find()
+    return render_template('profile.html', contents=guru_contents)
 
 @app.route('/SarPras',methods=['GET','POST'])
 def SarPras():
@@ -58,11 +59,13 @@ def galeri():
 
 @app.route('/prestasi',methods=['GET','POST'])
 def prestasi():
-    return render_template('prestasi.html')
+    prestasi_contents = db.prestasi.find()
+    return render_template('prestasi.html', contents=prestasi_contents)
 
 @app.route('/pengumuman',methods=['GET','POST'])
 def pengumuman():
-    return render_template('pengumuman.html')
+    pengumuman_contents = db.pengumuman.find()
+    return render_template('pengumuman.html', contents=pengumuman_contents)
 
 @app.route('/daftar',methods=['GET','POST'])
 def daftar():
@@ -114,59 +117,59 @@ def loginP():
     return render_template('loginP.html')
 
 # Login Pengunjung
-#@app.route("/sign_in", methods=["POST"])
-#def sign_in():
-#    username_receive = request.form["username_give"]
-#    password_receive = request.form["password_give"]
-#    pw_hash = hashlib.sha256(password_receive.encode("utf-8")).hexdigest()
-#    result = db.users.find_one(
-#        {
-#            "username": username_receive,
-#            "password": pw_hash,
-#        }
-#    )
-#    if result:
-#        payload = {
-#            "id": username_receive,
-#            "exp": datetime.utcnow() + timedelta(seconds=60 * 60 * 24),
-#        }
-#        token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
-#
-#        return jsonify(
-#            {
-#                "result": "success",
-#                "token": token,
-#            }
-#        )
-#    else:
-#        return jsonify(
-#            {
-#                "result": "fail",
-#                "msg": "We could not find a user with that id/password combination",
-#            }
-#        )
-#
-#@app.route("/sign_up/save", methods=["POST"])
-#def sign_up():
-#    username_receive = request.form['username_give']
-#    password_receive = request.form['password_give']
-#    password_hash = hashlib.sha256(password_receive.encode('utf-8')).hexdigest()
-#    doc = {
-#        "username": username_receive,                               
-#        "password": password_hash,                                  
-#        "profile_name": username_receive,                           
-#        "profile_pic": "",                                          
-#        "profile_pic_real": "profile_pics/profile_placeholder.png", 
-#        "profile_info": ""                                          
-#    }
-#    db.users.insert_one(doc)
-#    return jsonify({'result': 'success'})
-#
-#@app.route('/sign_up/check_dup', methods=['POST'])
-#def check_dup():
-#    username_receive = request.form.get('username_give')
-#    exists = bool(db.users.find_one({'username': username_receive}))
-#    return jsonify({'result': 'success', 'exists': exists})
+@app.route("/sign_in", methods=["POST"])
+def sign_in():
+   username_receive = request.form["username_give"]
+   password_receive = request.form["password_give"]
+   pw_hash = hashlib.sha256(password_receive.encode("utf-8")).hexdigest()
+   result = db.users.find_one(
+       {
+           "username": username_receive,
+           "password": pw_hash,
+       }
+   )
+   if result:
+       payload = {
+           "id": username_receive,
+           "exp": datetime.utcnow() + timedelta(seconds=60 * 60 * 24),
+       }
+       token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
+
+       return jsonify(
+           {
+               "result": "success",
+               "token": token,
+           }
+       )
+   else:
+       return jsonify(
+           {
+               "result": "fail",
+               "msg": "We could not find a user with that id/password combination",
+           }
+       )
+
+@app.route("/sign_up/save", methods=["POST"])
+def sign_up():
+   username_receive = request.form['username_give']
+   password_receive = request.form['password_give']
+   password_hash = hashlib.sha256(password_receive.encode('utf-8')).hexdigest()
+   doc = {
+       "username": username_receive,                               
+       "password": password_hash,                                  
+       "profile_name": username_receive,                           
+       "profile_pic": "",                                          
+       "profile_pic_real": "profile_pics/profile_placeholder.png", 
+       "profile_info": ""                                          
+   }
+   db.users.insert_one(doc)
+   return jsonify({'result': 'success'})
+
+@app.route('/sign_up/check_dup', methods=['POST'])
+def check_dup():
+   username_receive = request.form.get('username_give')
+   exists = bool(db.users.find_one({'username': username_receive}))
+   return jsonify({'result': 'success', 'exists': exists})
 
 # Admin
 @app.route('/uploads/photos/<filename>')

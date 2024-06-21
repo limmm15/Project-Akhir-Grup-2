@@ -12,33 +12,15 @@
 
 <div class="container">
     <div class="d-flex flex-wrap justify-content-around">
+        {% for content in contents %}
         <div class="card mb-4" style="width: 18rem;">
-            <img src="..." class="card-img-top" alt="...">
+            <img src="{{ url_for('uploaded_file', filename=content.foto) }}" alt="{{ content.judul }}">
             <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of
-                    the card's
-                    content.</p>
+                <h5 class="card-title">{{ content.judul }}</h5>
+                <p class="card-text">{{ content.keterangan }}</p>
             </div>
         </div>
-        <div class="card mb-4" style="width: 18rem;">
-            <img src="..." class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of
-                    the card's
-                    content.</p>
-            </div>
-        </div>
-        <div class="card mb-4" style="width: 18rem;">
-            <img src="..." class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of
-                    the card's
-                    content.</p>
-            </div>
-        </div>
+        {% endfor %}
     </div>
 </div>
 

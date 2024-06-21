@@ -10,7 +10,7 @@
             <th>Actions</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody> 
         {% for content in contents %}
         <tr>
             <td><img src="{{ url_for('uploaded_file', filename=content.foto) }}" alt="{{ content.judul }}" width="100"></td>
