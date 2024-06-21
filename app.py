@@ -114,6 +114,40 @@ def loginA():
 def loginP():
     return render_template('loginP.html')
 
+# Login Admin
+@app.route("/sign_in_adm", methods=["POST"])
+def sign_in_adm():
+   username_receive = request.form["username_give"]
+   password_receive = request.form["password_give"]
+   pw_hash = hashlib.sha256(password_receive.encode("utf-8")).hexdigest()
+   result = db.admin.find_one(
+       {
+           "username": username_receive,
+           "password": pw_hash,
+       }
+   )
+   if result:
+       payload = {
+           "id": username_receive,
+           "exp": datetime.utcnow() + timedelta(seconds=60 * 60 * 24),
+       }
+       token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
+
+       return jsonify(
+           {
+               "result": "success",
+               "token": token,
+           }
+       )
+   else:
+       return jsonify(
+           {
+               "result": "fail",
+               "msg": "We could not find a user with that id/password combination",
+           }
+       )
+
+
 # Login Pengunjung
 @app.route("/sign_in", methods=["POST"])
 def sign_in():
@@ -207,12 +241,26 @@ class PrestasiForm(FlaskForm):
 
 @app.route('/dashboard')
 def dashboard():
-    return render_template('dashboard.html')
+    token_receive = request.cookies.get("mytoken")
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
+        user_info = db.admin.find_one({"username": payload["id"]})
+        return render_template("dashboard.html", user_info=user_info)
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("loginA", msg="Your token has expired"))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("loginA", msg="There was problem logging you in"))
 
 @app.route('/sarprasA')
 def sarprasA():
-    sarpras_contents = db.sarpras.find()
-    return render_template('sarprasA.html', contents=sarpras_contents)
+    token_receive = request.cookies.get("mytoken")
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
+        user_info = db.admin.find_one({"username": payload["id"]})
+        sarpras_contents = db.sarpras.find()
+        return render_template("sarprasA.html", contents=sarpras_contents, user_info=user_info)
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("loginA"))
 
 @app.route('/add_sarpras', methods=['GET', 'POST'])
 def add_sarpras():
