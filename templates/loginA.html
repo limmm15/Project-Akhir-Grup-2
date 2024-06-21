@@ -60,7 +60,7 @@
             },
             success: function (response) {
                 if (response["result"] === "success") {
-                    $.cookie("mytoken", response["token"], { path: "/dashboard" });
+                    $.cookie("mytoken", response["token"], { path: "/" });
                     window.location.replace("/dashboard");
                 } else {
                     alert(response["msg"]);

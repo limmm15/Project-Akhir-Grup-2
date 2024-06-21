@@ -264,231 +264,374 @@ def sarprasA():
 
 @app.route('/add_sarpras', methods=['GET', 'POST'])
 def add_sarpras():
-    form = SarprasForm()
-    if form.validate_on_submit():
-        judul = form.judul.data
-        keterangan = form.keterangan.data
-        foto = form.foto.data
-        if foto:
-            filename = secure_filename(foto.filename)
-            foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            db.sarpras.insert_one({'foto': filename, 'judul': judul, 'keterangan': keterangan})
-            return redirect(url_for('sarprasA'))
-        else:
-            flash('Foto is required')
-    return render_template('add_sarpras.html', form=form)
+    token_receive = request.cookies.get("mytoken")
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
+        user_info = db.admin.find_one({"username": payload["id"]})
+        form = SarprasForm()
+        if form.validate_on_submit():
+            judul = form.judul.data
+            keterangan = form.keterangan.data
+            foto = form.foto.data
+            if foto:
+                filename = secure_filename(foto.filename)
+                foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                db.sarpras.insert_one({'foto': filename, 'judul': judul, 'keterangan': keterangan})
+                return redirect(url_for('sarprasA'))
+            else:
+                flash('Foto is required')
+        return render_template('add_sarpras.html', form=form, user_info=user_info)
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("loginA"))
 
 @app.route('/edit_sarpras/<id>', methods=['GET', 'POST'])
 def edit_sarpras(id):
-    content = db.sarpras.find_one({'_id': ObjectId(id)})
-    form = SarprasForm(obj=content)
-    if request.method == 'POST' and form.validate():
-        judul = form.judul.data
-        keterangan = form.keterangan.data
-        foto = form.foto.data
-        if foto:
-            filename = secure_filename(foto.filename)
-            foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            db.sarpras.update_one({'_id': ObjectId(id)}, {"$set": {'foto': filename, 'judul': judul, 'keterangan': keterangan}})
-        else:
-            db.sarpras.update_one({'_id': ObjectId(id)}, {"$set": {'judul': judul, 'keterangan': keterangan}})
-        return redirect(url_for('sarprasA'))
-    return render_template('edit_sarpras.html', form=form, content=content)
+    token_receive = request.cookies.get("mytoken")
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
+        user_info = db.admin.find_one({"username": payload["id"]})
+        content = db.sarpras.find_one({'_id': ObjectId(id)})
+        form = SarprasForm(obj=content)
+        if request.method == 'POST' and form.validate():
+            judul = form.judul.data
+            keterangan = form.keterangan.data
+            foto = form.foto.data
+            if foto:
+                filename = secure_filename(foto.filename)
+                foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                db.sarpras.update_one({'_id': ObjectId(id)}, {"$set": {'foto': filename, 'judul': judul, 'keterangan': keterangan}})
+            else:
+                db.sarpras.update_one({'_id': ObjectId(id)}, {"$set": {'judul': judul, 'keterangan': keterangan}})
+                return redirect(url_for('sarprasA'))
+        return render_template('edit_sarpras.html', form=form, content=content, user_info=user_info)
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("loginA"))
 
 @app.route('/delete_sarpras/<id>', methods=['POST'])
 def delete_sarpras(id):
-    db.sarpras.delete_one({'_id': ObjectId(id)})
-    return redirect(url_for('sarprasA'))
+    token_receive = request.cookies.get("mytoken")
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
+        user_info = db.admin.find_one({"username": payload["id"]})
+        db.sarpras.delete_one({'_id': ObjectId(id)})
+        return render_template('sarprasA.html', user_info=user_info)
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("loginA"))
 
 
 @app.route('/pengumumanA')
 def pengumumanA():
-    pengumuman_contents = db.pengumuman.find()
-    return render_template('pengumumanA.html', contents=pengumuman_contents)
+    token_receive = request.cookies.get("mytoken")
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
+        user_info = db.admin.find_one({"username": payload["id"]})
+        pengumuman_contents = db.pengumuman.find()
+        return render_template('pengumumanA.html', contents=pengumuman_contents, user_info=user_info)
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("loginA", msg="Your token has expired"))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("loginA", msg="There was problem logging you in"))
 
 @app.route('/add_pengumuman', methods=['GET', 'POST'])
 def add_pengumuman():
-    form = PengumumanForm()
-    if form.validate_on_submit():
-        judul = form.judul.data
-        keterangan = form.keterangan.data
-        foto = form.foto.data
-        if foto:
-            filename = secure_filename(foto.filename)
-            foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            db.pengumuman.insert_one({'foto': filename, 'judul': judul, 'keterangan': keterangan})
-            return redirect(url_for('pengumumanA'))
-        else:
-            flash('Foto is required')
-    return render_template('add_pengumuman.html', form=form)
+    token_receive = request.cookies.get("mytoken")
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
+        user_info = db.admin.find_one({"username": payload["id"]})
+        form = PengumumanForm()
+        if form.validate_on_submit():
+            judul = form.judul.data
+            keterangan = form.keterangan.data
+            foto = form.foto.data
+            if foto:
+                filename = secure_filename(foto.filename)
+                foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                db.pengumuman.insert_one({'foto': filename, 'judul': judul, 'keterangan': keterangan})
+                return redirect(url_for('pengumumanA'))
+            else:
+                flash('Foto is required')
+        return render_template('add_pengumuman.html', form=form, user_info=user_info)
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("loginA"))
 
 @app.route('/edit_pengumuman/<id>', methods=['GET', 'POST'])
 def edit_pengumuman(id):
-    content = db.pengumuman.find_one({'_id': ObjectId(id)})
-    form = PengumumanForm(obj=content)
-    if request.method == 'POST' and form.validate():
-        judul = form.judul.data
-        keterangan = form.keterangan.data
-        foto = form.foto.data
-        if foto:
-            filename = secure_filename(foto.filename)
-            foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            db.pengumuman.update_one({'_id': ObjectId(id)}, {"$set": {'foto': filename, 'judul': judul, 'keterangan': keterangan}})
-        else:
-            db.pengumuman.update_one({'_id': ObjectId(id)}, {"$set": {'judul': judul, 'keterangan': keterangan}})
-        return redirect(url_for('pengumumanA'))
-    return render_template('edit_pengumuman.html', form=form, content=content)
+    token_receive = request.cookies.get("mytoken")
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
+        user_info = db.admin.find_one({"username": payload["id"]})
+        content = db.pengumuman.find_one({'_id': ObjectId(id)})
+        form = PengumumanForm(obj=content)
+        if request.method == 'POST' and form.validate():
+            judul = form.judul.data
+            keterangan = form.keterangan.data
+            foto = form.foto.data
+            if foto:
+                filename = secure_filename(foto.filename)
+                foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                db.pengumuman.update_one({'_id': ObjectId(id)}, {"$set": {'foto': filename, 'judul': judul, 'keterangan': keterangan}})
+            else:
+                db.pengumuman.update_one({'_id': ObjectId(id)}, {"$set": {'judul': judul, 'keterangan': keterangan}})
+            return redirect(url_for('pengumumanA'))
+        return render_template('edit_pengumuman.html', form=form, content=content, user_info=user_info)
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("loginA"))
 
 @app.route('/delete_pengumuman/<id>', methods=['POST'])
 def delete_pengumuman(id):
-    db.pengumuman.delete_one({'_id': ObjectId(id)})
-    return redirect(url_for('pengumumanA'))
-
+    token_receive = request.cookies.get("mytoken")
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
+        user_info = db.admin.find_one({"username": payload["id"]})
+        db.pengumuman.delete_one({'_id': ObjectId(id)})
+        return render_template('pengumumanA.html', user_info=user_info)
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("loginA"))
 
 @app.route('/guruA')
 def guruA():
-    guru_contents = db.guru.find()
-    return render_template('guru.html', contents=guru_contents)
+    token_receive = request.cookies.get("mytoken")
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
+        user_info = db.admin.find_one({"username": payload["id"]})
+        guru_contents = db.guru.find()
+        return render_template('guru.html', contents=guru_contents, user_info=user_info)
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("loginA", msg="Your token has expired"))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("loginA", msg="There was problem logging you in"))
 
 @app.route('/add_guru', methods=['GET', 'POST'])
 def add_guru():
-    form = GuruForm()
-    if form.validate_on_submit():
-        judul = form.judul.data
-        keterangan = form.keterangan.data
-        foto = form.foto.data
-        if foto:
-            filename = secure_filename(foto.filename)
-            foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            db.guru.insert_one({'foto': filename, 'judul': judul, 'keterangan': keterangan})
-            return redirect(url_for('guruA'))
-        else:
-            flash('Foto is required')
-    return render_template('add_guru.html', form=form)
+    token_receive = request.cookies.get("mytoken")
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
+        user_info = db.admin.find_one({"username": payload["id"]})
+        form = GuruForm()
+        if form.validate_on_submit():
+            judul = form.judul.data
+            keterangan = form.keterangan.data
+            foto = form.foto.data
+            if foto:
+                filename = secure_filename(foto.filename)
+                foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                db.guru.insert_one({'foto': filename, 'judul': judul, 'keterangan': keterangan})
+                return redirect(url_for('guruA'))
+            else:
+                flash('Foto is required')
+        return render_template('add_guru.html', form=form, user_info=user_info)
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("loginA"))
 
 @app.route('/edit_guru/<id>', methods=['GET', 'POST'])
 def edit_guru(id):
-    content = db.guru.find_one({'_id': ObjectId(id)})
-    form = GuruForm(obj=content)
-    if request.method == 'POST' and form.validate():
-        judul = form.judul.data
-        keterangan = form.keterangan.data
-        foto = form.foto.data
-        if foto:
-            filename = secure_filename(foto.filename)
-            foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            db.guru.update_one({'_id': ObjectId(id)}, {"$set": {'foto': filename, 'judul': judul, 'keterangan': keterangan}})
-        else:
-            db.guru.update_one({'_id': ObjectId(id)}, {"$set": {'judul': judul, 'keterangan': keterangan}})
-        return redirect(url_for('guruA'))
-    return render_template('edit_guru.html', form=form, content=content)
+    token_receive = request.cookies.get("mytoken")
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
+        user_info = db.admin.find_one({"username": payload["id"]})
+        content = db.guru.find_one({'_id': ObjectId(id)})
+        form = GuruForm(obj=content)
+        if request.method == 'POST' and form.validate():
+            judul = form.judul.data
+            keterangan = form.keterangan.data
+            foto = form.foto.data
+            if foto:
+                filename = secure_filename(foto.filename)
+                foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                db.guru.update_one({'_id': ObjectId(id)}, {"$set": {'foto': filename, 'judul': judul, 'keterangan': keterangan}})
+            else:
+                db.guru.update_one({'_id': ObjectId(id)}, {"$set": {'judul': judul, 'keterangan': keterangan}})
+            return redirect(url_for('guruA'))
+        return render_template('edit_guru.html', form=form, content=content, user_info=user_info)
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("loginA"))
 
 @app.route('/delete_guru/<id>', methods=['POST'])
 def delete_guru(id):
-    db.guru.delete_one({'_id': ObjectId(id)})
-    return redirect(url_for('guruA'))
+    token_receive = request.cookies.get("mytoken")
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
+        user_info = db.admin.find_one({"username": payload["id"]})
+        db.guru.delete_one({'_id': ObjectId(id)})
+        return render_template('guru.html',user_info=user_info)
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("loginA"))
 
 
 @app.route('/galeriA')
 def galeriA():
-    galeri_contents = db.galeri.find()
-    return render_template('galeriA.html', contents=galeri_contents)
+    token_receive = request.cookies.get("mytoken")
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
+        user_info = db.admin.find_one({"username": payload["id"]})
+        galeri_contents = db.galeri.find()
+        return render_template('galeriA.html', contents=galeri_contents, user_info=user_info)
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("loginA", msg="Your token has expired"))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("loginA", msg="There was problem logging you in"))
 
 @app.route('/add_galeri', methods=['GET', 'POST'])
 def add_galeri():
-    form = GaleriForm()
-    if form.validate_on_submit():
-        judul = form.judul.data
-        keterangan = form.keterangan.data
-        foto = form.foto.data
-        if foto:
-            filename = secure_filename(foto.filename)
-            foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            db.galeri.insert_one({'foto': filename, 'judul': judul, 'keterangan': keterangan})
-            return redirect(url_for('galeriA'))
-        else:
-            flash('Foto is required')
-    return render_template('add_galeri.html', form=form)
+    token_receive = request.cookies.get("mytoken")
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
+        user_info = db.admin.find_one({"username": payload["id"]})
+        form = GaleriForm()
+        if form.validate_on_submit():
+            judul = form.judul.data
+            keterangan = form.keterangan.data
+            foto = form.foto.data
+            if foto:
+                filename = secure_filename(foto.filename)
+                foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                db.galeri.insert_one({'foto': filename, 'judul': judul, 'keterangan': keterangan})
+                return redirect(url_for('galeriA'))
+            else:
+                flash('Foto is required')
+        return render_template('add_galeri.html', form=form, user_info=user_info)
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("loginA"))
 
 @app.route('/edit_galeri/<id>', methods=['GET', 'POST'])
 def edit_galeri(id):
-    content = db.galeri.find_one({'_id': ObjectId(id)})
-    form = GaleriForm(obj=content)
-    if request.method == 'POST' and form.validate():
-        judul = form.judul.data
-        keterangan = form.keterangan.data
-        foto = form.foto.data
-        if foto:
-            filename = secure_filename(foto.filename)
-            foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            db.galeri.update_one({'_id': ObjectId(id)}, {"$set": {'foto': filename, 'judul': judul, 'keterangan': keterangan}})
-        else:
-            db.galeri.update_one({'_id': ObjectId(id)}, {"$set": {'judul': judul, 'keterangan': keterangan}})
-        return redirect(url_for('galeriA'))
-    return render_template('edit_galeri.html', form=form, content=content)
+    token_receive = request.cookies.get("mytoken")
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
+        user_info = db.admin.find_one({"username": payload["id"]})
+        content = db.galeri.find_one({'_id': ObjectId(id)})
+        form = GaleriForm(obj=content)
+        if request.method == 'POST' and form.validate():
+            judul = form.judul.data
+            keterangan = form.keterangan.data
+            foto = form.foto.data
+            if foto:
+                filename = secure_filename(foto.filename)
+                foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                db.galeri.update_one({'_id': ObjectId(id)}, {"$set": {'foto': filename, 'judul': judul, 'keterangan': keterangan}})
+            else:
+                db.galeri.update_one({'_id': ObjectId(id)}, {"$set": {'judul': judul, 'keterangan': keterangan}})
+            return redirect(url_for('galeriA'))
+        return render_template('edit_galeri.html', form=form, content=content, user_info=user_info)
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("loginA"))
 
 @app.route('/delete_galeri/<id>', methods=['POST'])
 def delete_galeri(id):
-    db.galeri.delete_one({'_id': ObjectId(id)})
-    return redirect(url_for('galeriA'))
+    token_receive = request.cookies.get("mytoken")
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
+        user_info = db.admin.find_one({"username": payload["id"]})
+        db.galeri.delete_one({'_id': ObjectId(id)})
+        return render_template('galeri.html', user_info=user_info)
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("loginA"))
 
 @app.route('/prestasiA')
 def prestasiA():
-    prestasi_contents = db.prestasi.find()
-    return render_template('prestasiA.html', contents=prestasi_contents)
+    token_receive = request.cookies.get("mytoken")
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
+        user_info = db.admin.find_one({"username": payload["id"]})
+        prestasi_contents = db.prestasi.find()
+        return render_template('prestasiA.html', contents=prestasi_contents, user_info=user_info)
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("loginA", msg="Your token has expired"))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("loginA", msg="There was problem logging you in"))
 
 @app.route('/add_prestasi', methods=['GET', 'POST'])
 def add_prestasi():
-    form = PrestasiForm()
-    if form.validate_on_submit():
-        judul = form.judul.data
-        keterangan = form.keterangan.data
-        foto = form.foto.data
-        if foto:
-            filename = secure_filename(foto.filename)
-            foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            db.prestasi.insert_one({'foto': filename, 'judul': judul, 'keterangan': keterangan})
-            return redirect(url_for('prestasiA'))
-        else:
-            flash('Foto is required')
-    return render_template('add_prestasi.html', form=form)
+    token_receive = request.cookies.get("mytoken")
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
+        user_info = db.admin.find_one({"username": payload["id"]})
+        form = PrestasiForm()
+        if form.validate_on_submit():
+            judul = form.judul.data
+            keterangan = form.keterangan.data
+            foto = form.foto.data
+            if foto:
+                filename = secure_filename(foto.filename)
+                foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                db.prestasi.insert_one({'foto': filename, 'judul': judul, 'keterangan': keterangan})
+                return redirect(url_for('prestasiA'))
+            else:
+                flash('Foto is required')
+        return render_template('add_prestasi.html', form=form, user_info=user_info)
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("loginA"))
 
 @app.route('/edit_prestasi/<id>', methods=['GET', 'POST'])
 def edit_prestasi(id):
-    content = db.prestasi.find_one({'_id': ObjectId(id)})
-    form = PrestasiForm(obj=content)
-    if request.method == 'POST' and form.validate():
-        judul = form.judul.data
-        keterangan = form.keterangan.data
-        foto = form.foto.data
-        if foto:
-            filename = secure_filename(foto.filename)
-            foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            db.prestasi.update_one({'_id': ObjectId(id)}, {"$set": {'foto': filename, 'judul': judul, 'keterangan': keterangan}})
-        else:
-            db.prestasi.update_one({'_id': ObjectId(id)}, {"$set": {'judul': judul, 'keterangan': keterangan}})
-        return redirect(url_for('prestasiA'))
-    return render_template('edit_prestasi.html', form=form, content=content)
+    token_receive = request.cookies.get("mytoken")
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
+        user_info = db.admin.find_one({"username": payload["id"]})
+        content = db.prestasi.find_one({'_id': ObjectId(id)})
+        form = PrestasiForm(obj=content)
+        if request.method == 'POST' and form.validate():
+            judul = form.judul.data
+            keterangan = form.keterangan.data
+            foto = form.foto.data
+            if foto:
+                filename = secure_filename(foto.filename)
+                foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                db.prestasi.update_one({'_id': ObjectId(id)}, {"$set": {'foto': filename, 'judul': judul, 'keterangan': keterangan}})
+            else:
+                db.prestasi.update_one({'_id': ObjectId(id)}, {"$set": {'judul': judul, 'keterangan': keterangan}})
+            return redirect(url_for('prestasiA'))
+        return render_template('edit_prestasi.html', form=form, content=content, user_info=user_info)
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("loginA"))
 
 @app.route('/delete_prestasi/<id>', methods=['POST'])
 def delete_prestasi(id):
-    db.prestasi.delete_one({'_id': ObjectId(id)})
-    return redirect(url_for('prestasiA'))
+    token_receive = request.cookies.get("mytoken")
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
+        user_info = db.admin.find_one({"username": payload["id"]})
+        db.prestasi.delete_one({'_id': ObjectId(id)})
+        return render_template('prestasiA.html', user_info=user_info)
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("loginA"))
 
 @app.route('/form_pendaftaran')
 def form_pendaftaran():
-    form_pendaftaran_contents = db.form_pendaftaran.find()
-    return render_template('form_pendaftaran.html', contents=form_pendaftaran_contents)
-
+    token_receive = request.cookies.get("mytoken")
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
+        user_info = db.admin.find_one({"username": payload["id"]})
+        form_pendaftaran_contents = db.form_pendaftaran.find()
+        return render_template('form_pendaftaran.html', contents=form_pendaftaran_contents, user_info=user_info)
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("loginA", msg="Your token has expired"))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("loginA", msg="There was problem logging you in"))
+    
 @app.route('/user')
 def user():
-    user_contents = db.user.find()
-    return render_template('user.html', users=user_contents)
+    token_receive = request.cookies.get("mytoken")
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
+        user_info = db.admin.find_one({"username": payload["id"]})
+        user_contents = db.user.find()
+        return render_template('user.html', users=user_contents, user_info=user_info)
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("loginA", msg="Your token has expired"))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("loginA", msg="There was problem logging you in"))
 
 @app.route('/delete_user/<id>', methods=['POST'])
 def delete_user(id):
-    db.user.delete_one({'_id': ObjectId(id)})
-    return redirect(url_for('user'))
+    token_receive = request.cookies.get("mytoken")
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
+        user_info = db.admin.find_one({"username": payload["id"]})
+        db.user.delete_one({'_id': ObjectId(id)})
+        return redirect(url_for('user'))
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("loginA"))
 
 
 if __name__ == '__main__':
