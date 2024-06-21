@@ -29,16 +29,14 @@ app.config['MAX_CONTENT_PATH'] = 16 * 1024 * 1024  # 16 MB max upload size
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 
-client = MongoClient('mongodb+srv://aryo:aryo1@cluster0.qgygnbt.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
-db = client['Testing']
-# dotenv_path = join(dirname(__file__), '.env')
-# load_dotenv(dotenv_path)
+dotenv_path = join(dirname(__file__), '.env')
+load_dotenv(dotenv_path)
 
-# MONGODB_URI = os.environ.get("MONGODB_URI")
-# DB_NAME =  os.environ.get("DB_NAME")
+MONGODB_URI = os.environ.get("MONGODB_URI")
+DB_NAME =  os.environ.get("DB_NAME")
 
-# client = MongoClient(MONGODB_URI)
-# db = client[DB_NAME]
+client = MongoClient(MONGODB_URI)
+db = client[DB_NAME]
 
 @app.route('/',methods=['GET','POST'])
 def home():
@@ -72,41 +70,41 @@ def daftar():
     return render_template('daftar.html')
 
 #Daftar
-#@app.route('/submit', methods=['POST'])
-#def submit():
-#    nama = request.form['nama']
-#    nama_orang_tua = request.form['nama_orang_tua']
-#    alamat = request.form['alamat']
-#
-#    kartu_keluarga = request.files['kartu_keluarga']
-#    akte_kelahiran = request.files['akte_kelahiran']
-#    ijazah_tk = request.files['ijazah_tk']
-#
-#    filenames = {}
-#    
-#    if kartu_keluarga:
-#        filename = os.path.join(app.config['UPLOAD_FOLDER'], kartu_keluarga.filename)
-#        kartu_keluarga.save(filename)
-#        filenames['kartu_keluarga'] = filename
-#    
-#    if akte_kelahiran:
-#        filename = os.path.join(app.config['UPLOAD_FOLDER'], akte_kelahiran.filename)
-#        akte_kelahiran.save(filename)
-#        filenames['akte_kelahiran'] = filename
-#    
-#    if ijazah_tk:
-#        filename = os.path.join(app.config['UPLOAD_FOLDER'], ijazah_tk.filename)
-#        ijazah_tk.save(filename)
-#        filenames['ijazah_tk'] = filename
-#
-#    db.daftar.insert_one({
-#        "nama": nama,
-#        "nama_orang_tua": nama_orang_tua,
-#        "alamat": alamat,
-#        "files": filenames
-#    })
-#
-#    return redirect(url_for('form', success=True))
+@app.route('/submit', methods=['POST'])
+def submit():
+   nama = request.form['nama']
+   nama_orang_tua = request.form['nama_orang_tua']
+   alamat = request.form['alamat']
+
+   kartu_keluarga = request.files['kartu_keluarga']
+   akte_kelahiran = request.files['akte_kelahiran']
+   ijazah_tk = request.files['ijazah_tk']
+
+   filenames = {}
+   
+   if kartu_keluarga:
+       filename = os.path.join(app.config['UPLOAD_FOLDER'], kartu_keluarga.filename)
+       kartu_keluarga.save(filename)
+       filenames['kartu_keluarga'] = filename
+   
+   if akte_kelahiran:
+       filename = os.path.join(app.config['UPLOAD_FOLDER'], akte_kelahiran.filename)
+       akte_kelahiran.save(filename)
+       filenames['akte_kelahiran'] = filename
+   
+   if ijazah_tk:
+       filename = os.path.join(app.config['UPLOAD_FOLDER'], ijazah_tk.filename)
+       ijazah_tk.save(filename)
+       filenames['ijazah_tk'] = filename
+
+   db.daftar.insert_one({
+       "nama": nama,
+       "nama_orang_tua": nama_orang_tua,
+       "alamat": alamat,
+       "files": filenames
+   })
+
+   return redirect(url_for('form', success=True))
 
 @app.route('/loginA',methods=['GET','POST'])
 def loginA():
