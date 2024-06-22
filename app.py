@@ -410,15 +410,16 @@ def add_guru():
         form = GuruForm()
         if form.validate_on_submit():
             judul = form.judul.data
+            jabatan = form.jabatan.data
             keterangan = form.keterangan.data
             foto = form.foto.data
-            if foto:
-                filename = secure_filename(foto.filename)
-                foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                db.guru.insert_one({'foto': filename, 'judul': judul, 'keterangan': keterangan})
-                return redirect(url_for('guruA'))
-            else:
-                flash('Foto is required')
+        if foto:
+            filename = secure_filename(foto.filename)
+            foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            db.guru.insert_one({'foto': filename, 'judul': judul, 'jabatan': jabatan, 'keterangan': keterangan})
+            return redirect(url_for('guru'))
+        else:
+            flash('Foto is required')
         return render_template('add_guru.html', form=form, user_info=user_info)
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("loginA"))
@@ -433,14 +434,15 @@ def edit_guru(id):
         form = GuruForm(obj=content)
         if request.method == 'POST' and form.validate():
             judul = form.judul.data
+            jabatan = form.jabatan.data
             keterangan = form.keterangan.data
             foto = form.foto.data
-            if foto:
-                filename = secure_filename(foto.filename)
-                foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                db.guru.update_one({'_id': ObjectId(id)}, {"$set": {'foto': filename, 'judul': judul, 'keterangan': keterangan}})
-            else:
-                db.guru.update_one({'_id': ObjectId(id)}, {"$set": {'judul': judul, 'keterangan': keterangan}})
+        if foto:
+            filename = secure_filename(foto.filename)
+            foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            db.guru.update_one({'_id': ObjectId(id)}, {"$set": {'foto': filename, 'judul': judul, 'jabatan': jabatan, 'keterangan': keterangan}})
+        else:
+            db.guru.update_one({'_id': ObjectId(id)}, {"$set": {'judul': judul, 'jabatan': jabatan, 'keterangan': keterangan}})
             return redirect(url_for('guruA'))
         return render_template('edit_guru.html', form=form, content=content, user_info=user_info)
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
@@ -629,10 +631,34 @@ def delete_user(id):
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
         user_info = db.admin.find_one({"username": payload["id"]})
         db.user.delete_one({'_id': ObjectId(id)})
-        return redirect(url_for('user'))
+        return render_template('user.html', user_info=user_info)
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("loginA"))
+    
 
+@app.route('/testimoniA')
+def display_testimoni():
+    token_receive = request.cookies.get("mytoken")
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
+        user_info = db.admin.find_one({"username": payload["id"]})
+        testimoni_contents = db.testimoni.find()  # Pastikan koleksi yang benar digunakan
+        return render_template('testimoniA.html', testimoni=testimoni_contents, user_info=user_info)
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("loginA", msg="Your token has expired"))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("loginA", msg="There was problem logging you in"))
+
+@app.route('/delete_testimoni/<id>', methods=['POST'])
+def delete_testimoni(id):
+    token_receive = request.cookies.get("mytoken")
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
+        user_info = db.admin.find_one({"username": payload["id"]})
+        db.user.delete_one({'_id': ObjectId(id)})  # Pastikan koleksi yang benar digunakan
+        return render_template('testimoniA.html', user_info=user_info)
+    except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+        return redirect(url_for("loginA"))
 
 if __name__ == '__main__':
     app.run('0.0.0.0',port=5000,debug=True)

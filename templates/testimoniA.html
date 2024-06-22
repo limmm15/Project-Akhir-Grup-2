@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>User Management</h1>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Testimoni</th>
+            <th>Aksi</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.username }}</td>
+            <td>{{ user.testimoni }}</td>
+            <td>
+                <form action="{{ url_for('delete_testimoni', id=user._id) }}" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
