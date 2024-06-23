@@ -49,11 +49,13 @@ def Profile():
 
 @app.route('/SarPras',methods=['GET','POST'])
 def SarPras():
-    return render_template('sarpras.html')
+    sarpras_contents = db.sarpras.find()
+    return render_template('sarpras.html', contents=sarpras_contents)
 
 @app.route('/galeri',methods=['GET','POST'])
 def galeri():
-    return render_template('galeri.html')
+    galeri_contents = db.galeri.find()
+    return render_template('galeri.html', contents=galeri_contents)
 
 @app.route('/prestasi',methods=['GET','POST'])
 def prestasi():
@@ -203,6 +205,21 @@ def check_dup():
    exists = bool(db.users.find_one({'username': username_receive}))
    return jsonify({'result': 'success', 'exists': exists})
 
+
+# Pengunjung
+@app.route('/daftarlogin', methods=['GET','POST'])
+def daftarlogin():
+    token_receive = request.cookies.get("mytoken")
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
+        user_info = db.admin.find_one({"username": payload["id"]})
+        return render_template('daftarlogin.html', user_info=user_info)
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("loginp", msg="Your token has expired"))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("loginp", msg="There was problem logging you in"))
+
+
 # Admin
 @app.route('/uploads/photos/<filename>')
 def uploaded_file(filename):
@@ -224,6 +241,7 @@ class PengumumanForm(FlaskForm):
 class GuruForm(FlaskForm):
     foto = FileField('Foto', validators=[FileAllowed(['jpg', 'jpeg', 'png'], 'Images only!'), FileRequired()])
     judul = StringField('Judul', validators=[DataRequired()])
+    jabatan = StringField('Jabatan', validators=[DataRequired()])
     keterangan = TextAreaField('Keterangan', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
@@ -413,13 +431,13 @@ def add_guru():
             jabatan = form.jabatan.data
             keterangan = form.keterangan.data
             foto = form.foto.data
-        if foto:
-            filename = secure_filename(foto.filename)
-            foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            db.guru.insert_one({'foto': filename, 'judul': judul, 'jabatan': jabatan, 'keterangan': keterangan})
-            return redirect(url_for('guru'))
-        else:
-            flash('Foto is required')
+            if foto:
+                filename = secure_filename(foto.filename)
+                foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                db.guru.insert_one({'foto': filename, 'judul': judul, 'jabatan': jabatan, 'keterangan': keterangan})
+                return redirect(url_for('guruA'))
+            else:
+                flash('Foto is required')
         return render_template('add_guru.html', form=form, user_info=user_info)
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("loginA"))
@@ -437,13 +455,13 @@ def edit_guru(id):
             jabatan = form.jabatan.data
             keterangan = form.keterangan.data
             foto = form.foto.data
-        if foto:
-            filename = secure_filename(foto.filename)
-            foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            db.guru.update_one({'_id': ObjectId(id)}, {"$set": {'foto': filename, 'judul': judul, 'jabatan': jabatan, 'keterangan': keterangan}})
-        else:
-            db.guru.update_one({'_id': ObjectId(id)}, {"$set": {'judul': judul, 'jabatan': jabatan, 'keterangan': keterangan}})
-            return redirect(url_for('guruA'))
+            if foto:
+                filename = secure_filename(foto.filename)
+                foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                db.guru.update_one({'_id': ObjectId(id)}, {"$set": {'foto': filename, 'judul': judul, 'jabatan': jabatan, 'keterangan': keterangan}})
+            else:
+                db.guru.update_one({'_id': ObjectId(id)}, {"$set": {'judul': judul, 'jabatan': jabatan, 'keterangan': keterangan}})
+                return redirect(url_for('guruA'))
         return render_template('edit_guru.html', form=form, content=content, user_info=user_info)
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("loginA"))

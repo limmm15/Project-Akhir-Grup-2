@@ -193,7 +193,7 @@
             success: function (response) {
                 if (response["result"] === "success") {
                     $.cookie("mytoken", response["token"], { path: "/" });
-                    window.location.replace("/daftar");
+                    window.location.replace("/daftarlogin");
                 } else {
                     alert(response["msg"]);
                 }
