@@ -208,12 +208,45 @@ def check_dup():
 
 
 # Pengunjung
-@app.route("/daftarlogin")
+@app.route("/daftarlogin", methods=['GET','POST'])
 def daftarlogin():
     token_receive = request.cookies.get("mytoken")
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
         user_info = db.admin.find_one({"username": payload["id"]})
+        if request.method == 'POST':
+            nama = request.form['nama']
+            nama_orang_tua = request.form['namaortu']
+            alamat = request.form['alamat']
+
+            kartu_keluarga = request.files['kk']
+            akte_kelahiran = request.files['akte']
+            ijazah_tk = request.files['ijazah']
+
+            filenames = {}
+            
+            if kartu_keluarga:
+                filename = os.path.join(app.config['UPLOAD_FOLDER'], kartu_keluarga.filename)
+                kartu_keluarga.save(filename)
+                filenames['kartu_keluarga'] = filename
+            
+            if akte_kelahiran:
+                filename = os.path.join(app.config['UPLOAD_FOLDER'], akte_kelahiran.filename)
+                akte_kelahiran.save(filename)
+                filenames['akte_kelahiran'] = filename
+            
+            if ijazah_tk:
+                filename = os.path.join(app.config['UPLOAD_FOLDER'], ijazah_tk.filename)
+                ijazah_tk.save(filename)
+                filenames['ijazah_tk'] = filename
+
+            db.daftar.insert_one({
+                "nama": nama,
+                "nama_orang_tua": nama_orang_tua,
+                "alamat": alamat,
+                "files": filenames
+            })
+            return redirect(url_for('daftarlogin', success=True))
         return render_template('daftarlogin.html', user_info=user_info)
     except jwt.ExpiredSignatureError:
         return redirect(url_for("loginp", msg="Your token has expired"))
@@ -645,7 +678,7 @@ def form_pendaftaran():
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
         user_info = db.admin.find_one({"username": payload["id"]})
-        form_pendaftaran_contents = db.form_pendaftaran.find()
+        form_pendaftaran_contents = db.daftar.find()
         return render_template('form_pendaftaran.html', contents=form_pendaftaran_contents, user_info=user_info)
     except jwt.ExpiredSignatureError:
         return redirect(url_for("loginA", msg="Your token has expired"))

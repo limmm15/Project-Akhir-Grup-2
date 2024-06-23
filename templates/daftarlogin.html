@@ -11,9 +11,10 @@
 
 <br />
 
-<div class="container mt-5 mb-5 form">
+<div class="container mt-5 mb-5 form shadow rounded">
     <h3 class="text-center">Form Pendaftaran Siswa</h3>
-    <form action="" method="post" enctype="multipart/form-data" id="pendaftaranForm">
+    <form action="{{ url_for('daftarlogin') }}" method="post" enctype="multipart/form-data" id="pendaftaranForm"
+        onsubmit="return kirim(event)">
         <div class="mb-3 row">
             <label for="nama" class="form-label">Nama</label>
             <input type="text" class="form-control" id="nama" name="nama" placeholder="Isikan nama calon siswa"
@@ -52,10 +53,30 @@
         </div>
         <div class="row">
             <div class="col">
-                <button type="submit" class="btn" style="background-color: #51be78; color: white;">Kirim</button>
+                <button type="submit" class="btn btn-right" style="background-color: #51be78; color: white;">Kirim</button>
             </div>
         </div>
     </form>
 </div>
+
+<div class="container mt-5 mb-5 d-flex justify-content-center">
+    <div class="p-5 shadow rounded text-dark text-center" style="background-color: hsl(0, 0%, 94%); width:700px">        
+        <p>Klik tombol dibawah ini untuk menambahkan testimoni : </p>
+        <button type="button" class="btn btn-primary" onclick="go_testi()">Tambahkan Testimoni</button>
+    </div>
+</div>
+
+<script>
+    function kirim(event) {
+        event.preventDefault();
+        alert("Data berhasil dikirim!");
+
+        document.getElementById('pendaftaranForm').submit();
+    }
+
+    function go_testi(){
+        window.location.href = '/testilogin'
+    }
+</script>
 
 {% include 'footer.html' %}

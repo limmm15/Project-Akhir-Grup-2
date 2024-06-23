@@ -8,18 +8,20 @@
         <tr>
             <th>#</th>
             <th>Nama</th>
-            <th>Email</th>
-            <th>Telepon</th>
+            <th>Nama ORTU</th>
+            <th>Alamat</th>
+            <th>Berkas</th>
             <th>Aksi</th>
         </tr>
     </thead>
     <tbody>
-        {% for form in forms %}
+        {% for content in contents %}
         <tr>
             <td>{{ loop.index }}</td>
-            <td>{{ form.nama }}</td>
-            <td>{{ form.email }}</td>
-            <td>{{ form.telepon }}</td>
+            <td>{{ content.nama }}</td>
+            <td>{{ content.nama_orang_tua }}</td>
+            <td>{{ content.alamat }}</td>
+            <td>{{ content.files }}</td>
             <td><a href="#" class="btn btn-primary">Download</a></td>
         </tr>
         {% endfor %}
