@@ -13,7 +13,6 @@
     <link rel="stylesheet" href="../static/css/jquery-ui.css">
     <link rel="stylesheet" href="../static/css/owl.carousel.min.css">
     <link rel="stylesheet" href="../static/css/owl.theme.default.min.css">
-    <link rel="stylesheet" href="../static/css/owl.theme.default.min.css">
     <link rel="stylesheet" href="../static/css/jquery.fancybox.min.css">
     <link rel="stylesheet" href="../static/css/bootstrap-datepicker.css">
     <link rel="stylesheet" href="../static/fonts/flaticon/font/flaticon.css">
@@ -33,9 +32,18 @@
                     <span class="icon-close2 js-menu-toggle"></span>
                 </div>
             </div>
-            <div class="site-mobile-menu-body"></div>
+            <div class="site-mobile-menu-body">
+                <ul class="site-menu">
+                    <li><a href="/" class="nav-link text-left">Home</a></li>
+                    <li><a href="/profile" class="nav-link text-left">Profile</a></li>
+                    <li><a href="/SarPras" class="nav-link text-left">SarPras</a></li>
+                    <li><a href="/galeri" class="nav-link text-left">Galeri</a></li>
+                    <li><a href="/prestasi" class="nav-link text-left">Prestasi</a></li>
+                    <li><a href="/pengumuman" class="nav-link text-left">Pengumuman</a></li>
+                    <li><a href="/daftar" class="nav-link text-left">Daftar</a></li>
+                </ul>
+            </div>
         </div>
-
 
         <div class="py-2 bg-light">
             <div class="container">
@@ -64,9 +72,9 @@
                             <img src="../static/images/logotwh.png" alt="Image" class="img-fluid" style="width: 80px;">
                         </a>
                     </div>
-                    <div class="mr-auto ml-auto">
+                    <div class="mr-auto ml-auto d-none d-lg-block">
                         <nav class="site-navigation position-relative text-right" role="navigation">
-                            <ul class="site-menu main-menu js-clone-nav mr-auto d-none d-lg-block">
+                            <ul class="site-menu main-menu mr-auto">
                                 <li>
                                     <a href="/" class="nav-link text-left">Home</a>
                                 </li>
@@ -89,7 +97,6 @@
                                     <a href="/daftar" class="nav-link text-left">Daftar</a>
                                 </li>
                             </ul>
-                            </ul>
                         </nav>
 
                     </div>
@@ -108,3 +115,16 @@
             </div>
 
         </header>
+
+    <script>
+        $(document).ready(function () {
+            $('.js-menu-toggle').on('click', function (e) {
+                e.preventDefault();
+                $('.site-mobile-menu-body').toggleClass('open');
+            });
+
+            $('.site-mobile-menu-body a').on('click', function () {
+                $('.site-mobile-menu-body').removeClass('open');
+            });
+        });
+    </script>
