@@ -40,7 +40,8 @@ db = client[DB_NAME]
 
 @app.route('/',methods=['GET','POST'])
 def home():
-    return render_template('index.html')
+    testimoni_contents = db.testimoni.find() 
+    return render_template('index.html', testimoni=testimoni_contents)
 
 @app.route('/profile',methods=['GET','POST'])
 def Profile():
@@ -207,13 +208,36 @@ def check_dup():
 
 
 # Pengunjung
-@app.route('/daftarlogin', methods=['GET','POST'])
+@app.route("/daftarlogin")
 def daftarlogin():
     token_receive = request.cookies.get("mytoken")
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
         user_info = db.admin.find_one({"username": payload["id"]})
         return render_template('daftarlogin.html', user_info=user_info)
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("loginp", msg="Your token has expired"))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("loginp", msg="There was problem logging you in"))  
+
+@app.route('/testilogin', methods=['GET','POST'])
+def testilogin():
+    token_receive = request.cookies.get("mytoken")
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
+        user_info = db.admin.find_one({"username": payload["id"]})
+        if request.method == 'POST' :
+            nama = request.form['namatestimoni']
+            jabatan = request.form['jabatan']
+            testimoni = request.form['testimoni']
+            doc = {
+                'nama' : nama,
+                'jabatan' : jabatan,
+                'testimoni' : testimoni
+            }
+            db.testimoni.insert_one(doc)
+            return redirect(url_for('testilogin', msg="Testimoni berhasil ditambahkan"))
+        return render_template('testilogin.html', user_info=user_info)
     except jwt.ExpiredSignatureError:
         return redirect(url_for("loginp", msg="Your token has expired"))
     except jwt.exceptions.DecodeError:
@@ -230,7 +254,6 @@ class SarprasForm(FlaskForm):
     judul = StringField('Judul', validators=[DataRequired()])
     keterangan = TextAreaField('Keterangan', validators=[DataRequired()])
     submit = SubmitField('Submit')
-
 
 class PengumumanForm(FlaskForm):
     foto = FileField('Foto', validators=[FileAllowed(['jpg', 'jpeg', 'png'], 'Images only!'), FileRequired()])
@@ -673,7 +696,7 @@ def delete_testimoni(id):
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
         user_info = db.admin.find_one({"username": payload["id"]})
-        db.user.delete_one({'_id': ObjectId(id)})  # Pastikan koleksi yang benar digunakan
+        db.testimoni.delete_one({'_id': ObjectId(id)})  # Pastikan koleksi yang benar digunakan
         return redirect(url_for('display_testimoni', user_info=user_info))
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("loginA"))

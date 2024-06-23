@@ -4,7 +4,7 @@
     <div class="container">
         <div class="px-4 py-5 my-5 text-center">
             <h1 class="display-5 fw-bold text-body-emphasis text-white">Form Pendaftaran Calon Siswa SDN
-                Puspamukti <br> Dan <br> Form Penambahan Testimoni</h1>
+                Puspamukti</h1>
         </div>
     </div>
 </div>
@@ -13,8 +13,7 @@
 
 <div class="container mt-5 mb-5 form">
     <h3 class="text-center">Form Pendaftaran Siswa</h3>
-    <form action="{{ url_for('submit') }}" method="post" enctype="multipart/form-data" id="pendaftaranForm"
-        onsubmit="return kirim(event)">
+    <form action="" method="post" enctype="multipart/form-data" id="pendaftaranForm">
         <div class="mb-3 row">
             <label for="nama" class="form-label">Nama</label>
             <input type="text" class="form-control" id="nama" name="nama" placeholder="Isikan nama calon siswa"
@@ -22,7 +21,7 @@
         </div>
         <div class="mb-3 row">
             <label for="nama_orang_tua" class="form-label">Nama Orang Tua</label>
-            <input type="text" class="form-control" id="nama_orang_tua" name="nama_orang_tua"
+            <input type="text" class="form-control" id="nama_orang_tua" name="namaortu"
                 placeholder="Isikan nama orang tua calon siswa" required />
         </div>
         <div class="mb-3 row">
@@ -33,21 +32,21 @@
         <div class="mb-3 row">
             <label for="kartu_keluarga" class="form-label">Kartu Keluarga</label>
             <div class="input-group">
-                <input type="file" class="form-control" id="kartu_keluarga" name="kartu_keluarga">
+                <input type="file" class="form-control" id="kartu_keluarga" name="kk">
                 <label class="input-group-text" for="kartu_keluarga">Browse</label>
             </div>
         </div>
         <div class="mb-3 row">
             <label for="akte_kelahiran" class="form-label">Akte Kelahiran</label>
             <div class="input-group">
-                <input type="file" class="form-control" id="akte_kelahiran" name="akte_kelahiran">
+                <input type="file" class="form-control" id="akte_kelahiran" name="akte">
                 <label class="input-group-text" for="akte_kelahiran">Browse</label>
             </div>
         </div>
         <div class="mb-3 row">
             <label for="ijazah_tk" class="form-label">Ijazah TK</label>
             <div class="input-group">
-                <input type="file" class="form-control" id="ijazah_tk" name="ijazah_tk">
+                <input type="file" class="form-control" id="ijazah_tk" name="ijazah">
                 <label class="input-group-text" for="ijazah_tk">Browse</label>
             </div>
         </div>
@@ -58,37 +57,5 @@
         </div>
     </form>
 </div>
-
-<section class="testimoni-section">
-    <div class="testimoni mt-5 mb-5 form">
-        <h3 class="text-center">Form Testimoni</h3>
-        <form action="" method="">
-            <div class="mb-3 row">
-                <label for="nama" class="form-label">Nama</label>
-                <input type="text" class="form-control" id="nama" name="nama" placeholder="Masukkan nama anda"
-                    required />
-            </div>
-            <div class="mb-3 row">
-                <label for="alamat" class="form-label">Testimoni</label>
-                <textarea class="form-control" id="alamat" name="alamat" placeholder="Ketikan testimoni anda"
-                    required></textarea>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <button type="submit" class="btn" style="background-color: #51be78; color: white;">Kirim</button>
-                </div>
-            </div>
-        </form>
-    </div>
-</section>
-
-<script>
-    function kirim(event) {
-        event.preventDefault();
-        alert("Data berhasil dikirim!");
-
-        document.getElementById('pendaftaranForm').submit();
-    }
-</script>
 
 {% include 'footer.html' %}

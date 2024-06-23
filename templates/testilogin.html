@@ -1,0 +1,41 @@
+{% include 'header.html' %}
+
+<div class="site-section ftco-subscribe-1 site-blocks-cover pb-4">
+    <div class="container">
+        <div class="px-4 py-5 my-5 text-center">
+            <h1 class="display-5 fw-bold text-body-emphasis text-white">Form Testimoni</h1>
+        </div>
+    </div>
+</div>
+
+<br />
+
+<section class="testimoni-section">
+    <div class="testimoni mt-5 mb-5 form">
+        <h3 class="text-center">Form Testimoni</h3>
+        <form action="/testilogin" method="POST" enctype="multipart/form-data">
+            <div class="mb-3 row">
+                <label for="nama" class="form-label">Nama</label>
+                <input type="text" class="form-control" id="namatestimoni" name="namatestimoni"
+                    placeholder="Masukkan nama anda" required />
+            </div>
+            <div class="mb-3 row">
+                <label for="jabatan" class="form-label">Jabatan</label>
+                <input type="text" class="form-control" id="jabatan" name="jabatan"
+                    placeholder="Masukkan jabatan atau anda sebagai apa" required />
+            </div>
+            <div class="mb-3 row">
+                <label for="alamat" class="form-label">Testimoni</label>
+                <textarea class="form-control" id="testimoni" name="testimoni" placeholder="Ketikan testimoni anda"
+                    required></textarea>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <button type="submit" class="btn" style="background-color: #51be78; color: white;">Kirim</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+{% include 'footer.html' %}
