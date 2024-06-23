@@ -1,46 +1,116 @@
-{% extends "layout.html" %}
-
 {% block styles %}
-<!-- <link href="{{ url_for('static', filename='css/galeri.css') }}" rel="stylesheet"> -->
+<style>
+    .navbar-brand {
+        font-weight: bold;
+        font-size: 1.5rem;
+        color: #fff;
+    }
+
+    .navbar {
+        background-color: #28a745;
+        /* Green theme */
+    }
+
+    .nav-link {
+        color: #fff !important;
+    }
+
+    .nav-link.active {
+        font-weight: bold;
+        color: #d4edda !important;
+        /* Light green */
+    }
+
+    .navbar-toggler {
+        border-color: #d4edda;
+    }
+
+    .navbar-toggler-icon {
+        color: #fff;
+    }
+
+    .card-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    .card-text {
+        font-size: 1rem;
+    }
+
+    .btn-primary {
+        background-color: #28a745;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #218838;
+    }
+
+    .bg-secondary-subtle {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+    }
+
+    .card-img-top {
+        height: 200px; /* Tinggi tetap */
+        object-fit: cover; /* Gambar mengisi konten */
+    }
+
+    .container {
+        margin-top: 2rem;
+    }
+
+    section h1 {
+        margin-bottom: 2rem;
+        font-weight: bold;
+        color: #28a745;
+        /* Green theme */
+    }
+
+    @media (max-width: 767.98px) {
+        .card-title {
+            font-size: 1rem;
+        }
+
+        .card-text {
+            font-size: 0.9rem;
+        }
+
+        .card-img-top {
+            height: 150px;
+        }
+
+        .navbar-brand {
+            font-size: 1.2rem;
+        }
+
+        .nav-link {
+            font-size: 0.9rem;
+        }
+    }
+</style>
 {% endblock %}
 
+{% extends "layout.html" %}
 {% block content %}
 <div class="container">
     <section class="my-3">
         <h1 class="text-center">Galeri SDN Puspamukti</h1>
         <div class="row">
-            <div class="col-md-4">
+            {% for item in galeri %}
+            <div class="col-md-4 mb-4">
                 <div class="card bg-secondary-subtle">
-                    <img src="https://via.placeholder.com/300" class="card-img-top" alt="...">
+                    <img src="{{ item.img_url }}" class="card-img-top" alt="{{ item.title }}">
                     <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                        <h5 class="card-title">{{ item.title }}</h5>
+                        <p class="card-text">{{ item.description }}</p>
+                        <a href="{{ item.action_link }}" class="btn btn-primary">Go Somewhere</a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card bg-secondary-subtle">
-                    <img src="https://via.placeholder.com/300" class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card bg-secondary-subtle">
-                    <img src="https://via.placeholder.com/300" class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
-                    </div>
-                </div>
-            </div>
+            {% endfor %}
         </div>
     </section>
-
 </div>
 {% endblock %}
