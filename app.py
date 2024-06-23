@@ -332,7 +332,7 @@ def delete_sarpras(id):
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
         user_info = db.admin.find_one({"username": payload["id"]})
         db.sarpras.delete_one({'_id': ObjectId(id)})
-        return render_template('sarprasA.html', user_info=user_info)
+        return redirect(url_for('sarprasA', user_info=user_info))
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("loginA"))
 
@@ -402,7 +402,7 @@ def delete_pengumuman(id):
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
         user_info = db.admin.find_one({"username": payload["id"]})
         db.pengumuman.delete_one({'_id': ObjectId(id)})
-        return render_template('pengumumanA.html', user_info=user_info)
+        return redirect(url_for('pengumumanA', user_info=user_info))
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("loginA"))
 
@@ -473,7 +473,7 @@ def delete_guru(id):
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
         user_info = db.admin.find_one({"username": payload["id"]})
         db.guru.delete_one({'_id': ObjectId(id)})
-        return render_template('guru.html',user_info=user_info)
+        return redirect(url_for('guruA', user_info=user_info))
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("loginA"))
 
@@ -543,7 +543,7 @@ def delete_galeri(id):
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
         user_info = db.admin.find_one({"username": payload["id"]})
         db.galeri.delete_one({'_id': ObjectId(id)})
-        return render_template('galeri.html', user_info=user_info)
+        return redirect(url_for('galeriA', user_info=user_info))
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("loginA"))
 
@@ -612,7 +612,7 @@ def delete_prestasi(id):
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
         user_info = db.admin.find_one({"username": payload["id"]})
         db.prestasi.delete_one({'_id': ObjectId(id)})
-        return render_template('prestasiA.html', user_info=user_info)
+        return redirect(url_for('PrestasiA', user_info=user_info))
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("loginA"))
 
@@ -635,7 +635,7 @@ def user():
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
         user_info = db.admin.find_one({"username": payload["id"]})
-        user_contents = db.user.find()
+        user_contents = db.users.find()
         return render_template('user.html', users=user_contents, user_info=user_info)
     except jwt.ExpiredSignatureError:
         return redirect(url_for("loginA", msg="Your token has expired"))
@@ -648,8 +648,8 @@ def delete_user(id):
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
         user_info = db.admin.find_one({"username": payload["id"]})
-        db.user.delete_one({'_id': ObjectId(id)})
-        return render_template('user.html', user_info=user_info)
+        db.users.delete_one({'_id': ObjectId(id)})
+        return redirect(url_for('user', user_info=user_info))
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("loginA"))
     
@@ -674,7 +674,7 @@ def delete_testimoni(id):
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
         user_info = db.admin.find_one({"username": payload["id"]})
         db.user.delete_one({'_id': ObjectId(id)})  # Pastikan koleksi yang benar digunakan
-        return render_template('testimoniA.html', user_info=user_info)
+        return redirect(url_for('display_testimoni', user_info=user_info))
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
         return redirect(url_for("loginA"))
 
